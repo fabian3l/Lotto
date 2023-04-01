@@ -1,7 +1,8 @@
 package com.lotto.domain.numberreciver;
 
 import com.lotto.domain.AdjustableClock;
-import com.lotto.domain.numberreciver.dto.InputNumbersResultDto;
+import com.lotto.domain.numberreciver.dto.NumberReceiverResponseDto;
+import com.lotto.domain.numberreciver.dto.TicketDto;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -27,7 +28,7 @@ class NumberReciverFacadeTest {
         //given
         Set<Integer> numbersFromUser = Set.of(1,2,3,4,5,6);
         //when
-        InputNumbersResultDto result = numberReciverFacade.inputNumbers(numbersFromUser);
+        NumberReceiverResponseDto result = numberReciverFacade.inputNumbers(numbersFromUser);
 
         //then
         assertThat(result.message()).isEqualTo("success");
@@ -36,7 +37,7 @@ class NumberReciverFacadeTest {
     public void should_return_save_to_database_when_user_gave_six_numbers() {
         //given
         Set<Integer> numbersFromUser = Set.of(1,2,3,4,5,6);
-        InputNumbersResultDto result = numberReciverFacade.inputNumbers(numbersFromUser);
+        NumberReceiverResponseDto result = numberReciverFacade.inputNumbers(numbersFromUser);
         LocalDateTime drawDate = LocalDateTime.of(2023, 03,15,21,0,0);
         //when
         List<TicketDto> ticketDtos = numberReciverFacade.userNumbers(drawDate);
@@ -45,7 +46,7 @@ class NumberReciverFacadeTest {
         assertThat(ticketDtos).contains(
                 TicketDto.builder()
                         .ticketId(result.ticketId())
-                        .drawDate(drawDate)
+                        .drawDate(result.drawDate())
                         .numbersFromUser(result.numbersFromUser())
                         .build()
         );
@@ -55,7 +56,7 @@ class NumberReciverFacadeTest {
         //given
         Set<Integer> numbersFromUser = Set.of(1,2,3,4,5);
         //when
-        InputNumbersResultDto result = numberReciverFacade.inputNumbers(numbersFromUser);
+        NumberReceiverResponseDto result = numberReciverFacade.inputNumbers(numbersFromUser);
         //then
         assertThat(result.message()).isEqualTo("failed");
     }
@@ -64,7 +65,7 @@ class NumberReciverFacadeTest {
         //given
         Set<Integer> numbersFromUser = Set.of(1,2,3,4,5,6, 7);
         //when
-        InputNumbersResultDto result = numberReciverFacade.inputNumbers(numbersFromUser);
+        NumberReceiverResponseDto result = numberReciverFacade.inputNumbers(numbersFromUser);
         //then
         assertThat(result.message()).isEqualTo("failed");
     }
@@ -73,7 +74,7 @@ class NumberReciverFacadeTest {
         //given
         Set<Integer> numbersFromUser = Set.of(1,2000,3,4,5,6);
         //when
-        InputNumbersResultDto result = numberReciverFacade.inputNumbers(numbersFromUser);
+        NumberReceiverResponseDto result = numberReciverFacade.inputNumbers(numbersFromUser);
         //then
         assertThat(result.message()).isEqualTo("failed");
 
